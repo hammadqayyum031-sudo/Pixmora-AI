@@ -1,0 +1,5 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(includes|data|license|config.local.php|create_tables_final.sql|install/.*)$ - [F,L,NC]
+</IfModule>
+Options -Indexes
