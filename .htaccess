@@ -1,5 +1,46 @@
+# PIXMORA AI - Clean URL Rewriting & Security
+# Enable Rewrite Engine
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteBase /
+
+  # Prevent direct access to sensitive folders
   RewriteRule ^(includes|data|license|config.local.php|create_tables_final.sql|install/.*)$ - [F,L,NC]
+
+  # Remove .php extension from URLs
+  # Rewrite login.php -> login
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^([a-zA-Z0-9_-]+)/?$ $1.php [L]
+
+  # Handle admin panel URLs
+  # Rewrite admin/login -> admin/login.php
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^admin/([a-zA-Z0-9_-]+)/?$ admin/$1.php [L]
+
+  # Handle API URLs
+  # Rewrite api/license/validate -> api/license/validate.php
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^api/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ api/$1/$2.php [L]
+
+  # Handle license URLs
+  # Rewrite license/activate -> license/activate.php
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^license/([a-zA-Z0-9_-]+)/?$ license/$1.php [L]
+
+  # Block .php file direct access
+  RewriteCond %{THE_REQUEST} \\.php
+  RewriteRule ^.*\\.php$ - [F,L]
 </IfModule>
+
+# Disable directory listing
 Options -Indexes
+
+# Prevent serving config files
+<FilesMatch "(config\\.local|config\\.php|create_tables)">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
